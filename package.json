@@ -1,0 +1,15 @@
+{
+  "name": "cryptobot-advanced",
+  "version": "1.0.0",
+  "description": "An advanced cryptocurrency trading bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elliott Minns",
+  "license": "ISC",
+  "dependencies": {
+    "gdax": "^0.6.0"
+  }
+}
