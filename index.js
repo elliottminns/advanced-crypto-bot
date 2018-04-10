@@ -1,5 +1,5 @@
 const program = require('commander')
-const Historical = require('./src/historical')
+const Backtester = require('./src/backtester')
 const config = require('./configuration')
 
 const now = new Date()
@@ -10,7 +10,8 @@ function toDate(val) {
 }
 
 program.version('1.0.0')
-  .option('-i, --interval [interval]', 'Interval in seconds for candlestick', parseInt)
+  .option('-i, --interval [interval]', 'Interval in seconds for candlestick',
+          parseInt)
   .option('-p, --product [product]', 'Product identifier', 'BTC-USD')
   .option('-s, --start [start]', 'Start time in unix seconds',
           toDate, yesterday)
@@ -20,15 +21,11 @@ program.version('1.0.0')
 const main = async function() {
   const { interval, product, start, end } = program
 
-  const service = new Historical({
-    start,
-    end,
-    product,
-    interval
+  const tester = new Backtester({
+    start, end, product, interval
   })
 
-  const data = await service.getData()
-  console.log(data)
+  await tester.start()
 }
 
 main()

@@ -10,7 +10,9 @@
   "author": "Elliott Minns",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.2.1",
     "commander": "^2.15.1",
-    "gdax": "^0.6.0"
+    "gdax": "^0.6.0",
+    "randomstring": "^1.1.5"
   }
 }
