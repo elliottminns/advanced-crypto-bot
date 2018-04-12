@@ -16,13 +16,14 @@ program.version('1.0.0')
   .option('-s, --start [start]', 'Start time in unix seconds',
           toDate, yesterday)
   .option('-e, --end [end]', 'End time in unix seconds', toDate, now)
+  .option('-t, --strategy [strategy]', 'Strategy Type')
   .parse(process.argv)
 
 const main = async function() {
-  const { interval, product, start, end } = program
+  const { interval, product, start, end, strategy } = program
 
   const tester = new Backtester({
-    start, end, product, interval
+    start, end, product, interval, strategyType: strategy
   })
 
   await tester.start()
