@@ -15,16 +15,14 @@ class SimpleStrategy extends Strategy {
       if (last < penu) {
         this.onBuySignal({ price, time })
       }
-    } else {
-      if (last > penu) {
-        open.forEach(p => {
-          if (p.enter.price * 1.01 < price) {
-            this.onSellSignal({
-              price, size: p.enter.size, position: p, time
-            })
-          }
-        })
-      }
+    } else if (last > penu) {
+      open.forEach(p => {
+        if (p.enter.price * 1.01 < price) {
+          this.onSellSignal({
+            price, size: p.enter.size, position: p, time
+          })
+        }
+      })
     }
   }
 }

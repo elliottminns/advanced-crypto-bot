@@ -1,29 +1,12 @@
 const Candlestick = require('../models/candlestick')
-const Historical = require('../historical')
-const { Factory } = require('../strategy')
 const randomstring = require('randomstring')
 const colors = require('colors/safe')
+const Runner = require('../runner')
 
-class Backtester {
-  constructor({ start, end, interval, product, strategyType }) {
-    this.startTime = start
-    this.endTime = end
-    this.interval
-    this.product = product
-    this.historical = new Historical({
-      start, end, interval, product
-    })
-    this.strategyType = strategyType
-  }
-
+class Backtester extends Runner {
   async start() {
     try {
       const history = await this.historical.getData()
-
-      this.strategy = Factory.create(this.strategyType, {
-        onBuySignal: (x) => { this.onBuySignal(x) },
-        onSellSignal: (x) => { this.onSellSignal(x) }
-      })
 
       await Promise.all(history.map((stick, index) => {
         const sticks = history.slice(0, index + 1)
@@ -32,18 +15,9 @@ class Backtester {
         })
       }))
 
-      const positions = this.strategy.getPositions()
-      positions.forEach((p) => {
-        p.print()
-      })
+      this.printPositions()
+      this.printProfit()
 
-      const total = positions.reduce((r, p) => {
-        return r + p.profit()
-      }, 0)
-
-      const prof = `${total}`
-      const colored = total > 0 ? colors.green(prof) : colors.red(prof)
-      console.log(`Total: ${colored}`)
     } catch (error) {
       console.log(error)
     }

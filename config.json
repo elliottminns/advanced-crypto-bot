@@ -2,5 +2,6 @@
   "GDAX_API_KEY": "YOUR-GDAX-KEY",
   "GDAX_API_SECRET": "YOUR-GDAX-SECRET",
   "GDAX_API_PASSPHRASE": "YOUR-GDAX-PASSPHRASE",
-  "GDAX_API_URL": "https://api.gdax.com"
+  "GDAX_API_URL": "https://api.gdax.com",
+  "GDAX_WS_URL": "wss://ws-feed.gdax.com"
 }
