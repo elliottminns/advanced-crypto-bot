@@ -17,17 +17,20 @@ program.version('1.0.0')
   .option('-p, --product [product]', 'Product identifier', 'BTC-USD')
   .option('-s, --start [start]', 'Start time in unix seconds',
           toDate, yesterday)
+
   .option('-e, --end [end]', 'End time in unix seconds', toDate, now)
   .option('-t, --strategy [strategy]', 'Strategy Type')
+  .option('-r, --type [type]', 'Run type')
+  .option('-f, --funds [funds]', 'Amount of money to use', parseInt)
   .option('-l, --live', 'Run live')
   .parse(process.argv)
 
 const main = async function() {
-  const { interval, product, start, end, strategy, live } = program
+  const { interval, product, start, end, strategy, live, type, funds } = program
 
-  if (live) {
+  if (type == 'trader') {
     const trader = new Trader({
-      start, end, product, interval, strategyType: strategy
+      start, end, product, interval, strategyType: strategy, live, funds
     })
 
     await trader.start()
