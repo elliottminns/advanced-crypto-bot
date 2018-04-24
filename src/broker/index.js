@@ -95,12 +95,18 @@ class Broker {
   onError(error) {
   }
 
+  async placeBuyOrder({ price, size }) {
+  }
+
+  async placeSellOrder({ price, size }) {
+  }
+
   async buy({ price, funds }) {
     if (!this.isLive) {
       return { size: funds / price, price: price }
     }
 
-    if (this.state !== 'running') { return }
+    if (this.state !== 'running') { return null }
     this.state = 'buying'
 
     const token = uuid()
@@ -112,13 +118,19 @@ class Broker {
       })
     }
     const data = this.generateMarketData({ token, funds })
-    const order = await this.client.buy(data)
-    if (order.message) {
+    try {
+      const order = await this.client.buy(data)
+      if (order.message) {
+        this.state = 'running'
+        throw new Error(order.message)
+      }
+      const filled = await lock()
       this.state = 'running'
-      throw new Error(order.message)
+      return filled
+    } catch (error) {
+      this.state = 'running'
+      throw error
     }
-    const filled = await lock()
-    return filled
   }
 
   async sell({ price, size }) {
@@ -132,20 +144,26 @@ class Broker {
     const token = uuid()
     this.tokens[token] = 'sell'
 
-    const lcok = () => {
+    const lock = () => {
       return new Promise((resolve, reject) => {
         this.callbacks[token] = resolve
       })
     }
 
-    const data = this.generateMarketData({ token, size })
-    const order = await this.client.sell(data)
-    if (order.message) {
+    try {
+      const data = this.generateMarketData({ token, size })
+      const order = await this.client.sell(data)
+      if (order.message) {
+        this.state = 'running'
+        throw new Error(order.message)
+      }
+      const filled = await lock()
       this.state = 'running'
-      throw new Error(order.message)
+      return filled
+    } catch (error) {
+      this.state = 'running'
+      throw error
     }
-    const filled = await lock()
-    return filled
   }
 
   generateMarketData({ token, funds, size }) {
@@ -158,6 +176,16 @@ class Broker {
     const amount = funds ? { funds } : { size }
 
     return Object.assign(order, amount)
+  }
+
+  generateLimitData({ token, size, price }) {
+    const order = {
+      product_id: this.product,
+      type: 'limit',
+      client_oid: token,
+      size: size,
+      price: price
+    }
   }
 }
 
